@@ -92,6 +92,19 @@
     };
     legend.addTo(map);
 
+    //inserindo título
+
+    var title = L.control();
+	 
+	title.onAdd = function (map) {
+		var div = L.DomUtil.create('div', 'info');
+		    div.innerHTML +=
+		    '<h2>COVID-19</h2>Número de infectados por país.(12-05-2020)';
+		 return div;
+	};
+	 
+	title.addTo(map);
+
 	</script>
 	</body> 
 </html>
