@@ -18,15 +18,59 @@
 	</style> 
 </head>  
 <body>
-	 <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+	<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
    crossorigin=""></script>
-	 <script src="covid.js"></script>
-		
+	<script src="covid.js"></script>
+		 
+	<div id ="map"> </div> 
+    
+    <script>
+    var map = L.map('map', {
+		center: [40, -5],
+		zoom: 3,
+    });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>     contributors.Datos: Universidad Johns Hopkins (JHU)',
+    }).addTo(map);
+
+    var MarkerOptions = {
+        fillColor: "#FF4000",
+        color: "#000",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+	};
+    function getRadius(r) { 
+		return r >= 100000 ? 25 : 
+		r >= 10000  ? 15 : 
+		r >= 5000  ? 7 : 
+		r >= 1000 ? 3:  
+		3; 
+	};
  
-	 <div id ="map"> </div> 
-	<script>
+	function estilo_covid (feature) {
+		return{
+			radius: getRadius(feature.properties.Confirmed), 
+        };
+	};
+	function popup_covid (feature, layer) {
+		layer.bindPopup("<div style=text-align:center><h3>"+feature.properties.Country_Region+
+        "<h3></div><hr><table><tr><td>Confirmados: "+feature.properties.Confirmed+
+        "</td></tr><tr><td>Mortos: "+feature.properties.Deaths+
+        "</td></tr><tr><td>Recuperados: "+feature.properties.Recovered+        
+        "</td></tr></table>",
+        {minWidth: 150, maxWidth: 200});				
+	};
  
+ 	var covidMundo = L.geoJSON(covid, {
+        pointToLayer: function (feature, latlng) {
+                return L.circleMarker(latlng, MarkerOptions);
+            },	
+        style:estilo_covid,
+        onEachFeature: popup_covid				
+    });
+	map.addLayer(covidMundo);
+
 	</script>
 	</body> 
 </html>
